@@ -55,8 +55,7 @@ async function processItems(items) {
         const [, stateWithoutEmoji] = state.split(' ');
         const result = {
             companyText,
-            country,
-            state: stateWithoutEmoji,
+            country: `${stateWithoutEmoji}, ${country}`,
         };
         resultItems.push(result);
     }
@@ -66,7 +65,7 @@ async function processItems(items) {
 function saveToFile(companies) {
     const workbook = XLSX.utils.book_new();
 
-    const sheet = XLSX.utils.json_to_sheet([], { header: ['Название', 'Страна', 'Штат'], origin: -1 });
+    const sheet = XLSX.utils.json_to_sheet([], { header: ['Название', 'Штат, страна'], origin: -1 });
 
     XLSX.utils.sheet_add_json(sheet, companies, { skipHeader: true, origin: "A2" });
 
