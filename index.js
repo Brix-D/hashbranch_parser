@@ -1,11 +1,14 @@
-import puppeteer from "puppeteer";
+import puppeteer from 'puppeteer-extra';
+import pluginStealth   from 'puppeteer-extra-plugin-stealth'; 
 import * as XLSX from 'xlsx/xlsx.mjs';
 
 import * as fs from 'fs';
 XLSX.set_fs(fs);
 
 
-const URL_TO_PARSE_SITE = 'https://app.hashbranch.com/companies';
+puppeteer.use(pluginStealth());
+
+const URL_TO_PARSE_SITE = 'https://www.crunchbase.com/discover/organization.companies/1896f014f0efb0aa8ff92c4aabecd6da';
 
 const LAUNCH_PUPPETEER_OPTS = {
     args: [
@@ -31,13 +34,17 @@ async function getPageContent() {
         const page = await browser.newPage();
         await page.setViewport({width: 1920, height: 1080, deviceScaleFactor: 1});
         await page.goto(URL_TO_PARSE_SITE, PAGE_PUPPETEER_OPTS);
-
-        const items = await page.$$('.css-1w7ir6s .css-xrb38u');
-
-        const companies = await processItems(items);
+        // console.log(await page.content());
+        await page.screenshot({ path: "image.png", fullPage: true });
+        // const items = await page.$$('.css-1w7ir6s .css-xrb38u');
+        const items = await page.$$('.body-wrapper grid-row');
+        for (const item of items) {
+            console.log(await item.evaluate((el) => el.textContent));
+        }
+        // const companies = await processItems(items);
         await browser.close();
 
-        saveToFile(companies);
+        // saveToFile(companies);
     } catch (error) {
         console.log(error);
     }
